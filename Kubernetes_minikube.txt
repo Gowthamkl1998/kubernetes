@@ -1,0 +1,53 @@
+Kubernetes Minikube (single node kubernetes cluster)
+
+EC2 instance - t2.medium
+
+- Ports for the Control-plane (Master) Node(s)
+
+1. TCP 6443      → For Kubernetes API server
+2. TCP 2379–2380 → For etcd server client API
+3. TCP 10250     → For Kubelet API
+4. TCP 10259     → For kube-scheduler
+5. TCP 10257     → For kube-controller-manager
+6. TCP 22        → For remote access with ssh
+7. UDP 8472      → Cluster-Wide Network Comm. — Flannel VXLAN
+
+sudo apt-get update
+
+sudo apt-get install docker.io -y
+
+sudo apt-get update && sudo apt-get install -y apt-transport-https gnupg2 curl
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >/etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+
+sudo apt-get install -y kubectl
+
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+chmod +x minikube
+
+sudo mv minikube /usr/local/bin/
+
+exit 
+
+cd /usr/local/bin/
+
+sudo useradd -aG docker $USER && newgrp docker
+
+sudo usermod -aG docker $USER && newgrp docker
+
+minikube version
+
+minikube start
+
+kubectl create deployment nginx-deployment --image=nginx
+
+kubectl expose deployment nginx-deployment --type=NodePort --port=80
+
+kubectl get service nginx-deployment
+
+

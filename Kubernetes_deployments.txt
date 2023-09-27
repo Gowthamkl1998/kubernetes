@@ -1,0 +1,89 @@
+vi busybox-deployment.yaml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: busybox-demo
+  template:
+    metadata:
+      labels:
+        app: busybox-demo
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["sleep", "3600"] # Keep the container running for 1 hour
+
+kubectl apply -f busybox-deployment.yaml
+
+kubectl get pods -l app=busybox-demo
+
+cat busybox-deployment.yaml
+
+kubectl get pods -o wide -l app=busybox-demo
+
+In worker node
+
+sudo docker ps
+
+sudo docker ps --filter "ancestor=busybox"
+
+sudo docker ps --filter "ancestor=busybox" --format "{{.TD}\t{{.Name}}"
+
+In master node
+
+kubectl get pods -l app=busybox-demo
+
+kubectl delete pod [name]
+
+vi busybox-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: busybox-service
+spec:
+  selector:
+    app: busybox-demo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+kubectl apply -f busybox-service.yaml
+
+kubectl get service busybox-service
+
+kubectl describe service busybox-service
+
+kubectl run -it --rm --image=busybox:1.32.0 test-busybox -- sh
+
+/ # wget -O- http://[cluster 
+
+Creating namespaces
+
+kubectl create namespace microdegree
+
+kubectl create -f busybox-deployment.yaml --namespace=microdegree
+
+kubectl get pods -n microdegree -l app=busybox-demo
+
+kubectl get deployments --all-namespaces
+
+kubectl get pods --all-namespaces
+
+kubectl get deployments,services --all-namespaces -o custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,READY:.status.readyReplicas,DESIRED:.spec.replicas,AVAILABLE:.status.availableReplicas,SERVICE:.spec.selector.app
+
+
+In AMAZON EKS
+
+add AMAZONEKSClusterPolicy to master
+add AMAZONEC2ContainerRegistryReadOnly, AMAZONEKS_CNI_Policy and AMAZONEKSWorkerNodePolicy
+
+
